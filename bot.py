@@ -61,6 +61,11 @@ client = MyClient()
 async def on_message(message: discord.Message):
     if message.author == client.user:
         return
+
+    if client.user.mentioned_in(message) and not message.mention_everyone:
+        await message.channel.send("I am the law!")
+        return
+
     if message.content.startswith("/"):
         return
 
