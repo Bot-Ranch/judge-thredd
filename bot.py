@@ -51,7 +51,8 @@ class MyClient(discord.Client):
 
     async def on_ready(self):
         print(f"Logged on as {self.user}!")
-        giverole_loop.start()
+        if not giverole_loop.is_running():
+            giverole_loop.start()
 
 client = MyClient()
 
