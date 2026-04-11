@@ -1,4 +1,5 @@
 import discord
+import random
 from datetime import time, timezone
 from discord import app_commands
 from discord.ext import tasks
@@ -51,7 +52,8 @@ class MyClient(discord.Client):
 
     async def on_ready(self):
         print(f"Logged on as {self.user}!")
-        giverole_loop.start()
+        if not giverole_loop.is_running():
+            giverole_loop.start()
 
 client = MyClient()
 
@@ -62,6 +64,26 @@ async def on_message(message: discord.Message):
     if message.author == client.user:
         return
     if message.content.startswith("/"):
+        return
+    
+    if client.user.mentioned_in(message) and not message.mention_everyone:
+        responses = [
+            "I am the law!",
+            "I am the law! And you'd better believe it!",
+            "I knew you'd say that",
+            "You want fear? I'm the fear. You want chaos? I'm the chaos. You want a new beginning? I am the new beginning!",
+            "It's a lie! The evidence has been falsified! It's impossible! I never broke the law, I AM THE LAW!",
+            "Court's adjourned!",
+            "YOU BETRAYED THE LAW! LAWWWWWW!",
+            "You wanna be afraid of somebody, be afraid of ME!",
+            "I'm alive! I'm alive! Oh... so are you.",
+            "Emotions? There ought to be a law against them.",
+            "Mission? Mission? We're going to war. WARRRRR.",
+            "I've never apologized.",
+            "I'll be the judge of that.",
+            "Double whammy",
+        ]
+        await message.channel.send(random.choice(responses))
         return
 
     data = load_data()
@@ -114,6 +136,7 @@ async def post_leaderboard(guild: discord.Guild):
 
     output_channel = client.get_channel(int(client.config["output_channel"]))
     await output_channel.send(embed=embed)
+
 
 # leaderboard command
 
