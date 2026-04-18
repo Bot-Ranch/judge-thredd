@@ -34,6 +34,10 @@ def load_data() -> dict:
 def save_data(data: dict):
     with open("leaderboard.json", "w") as f:
         json.dump(data, f, indent=4)
+        
+def save_config(config: dict):
+    with open("config.json", "w") as f:
+        json.dump(config, f, indent=4)
 
 # client setup
 
@@ -90,8 +94,10 @@ async def on_message(message: discord.Message):
     user = str(message.author.id)
     channelid = message.channel.id
 
-    # Check if user already exists in the leaderboard
     if channelid in client.config["channels"]:
+        if "sorry" in message.content.lower():
+            await message.reply("I've never apologized.")
+        
         if user in data:
             data[user] += 1
         else:
@@ -152,6 +158,30 @@ async def post_leaderboard(guild: discord.Guild):
 
 #     await post_leaderboard(interaction.guild)
 #     await interaction.response.send_message("Leaderboard posted!")
+
+# add channel id
+
+@client.tree.command(name="law-here", description="Add or remove this channelID from the config")
+async def law_here(interaction: discord.Interaction):
+    user_role_names = [role.name for role in interaction.user.roles]
+    allowed = client.config["allowed_roles"]
+    has_permission = any(role in user_role_names for role in allowed)
+    
+    if not has_permission:
+        await interaction.response.send_message("No clearance. No appeal. Move.", ephemeral=True)
+        return
+
+    channels = client.config["channels"]
+    if interaction.channel_id in channels:
+        channels.remove(interaction.channel_id)
+        save_config(client.config)
+        await interaction.response.send_message("Removed. The law has spoken.", ephemeral=False)
+    else:
+        channels.append(interaction.channel_id)
+        save_config(client.config)
+        await interaction.response.send_message("The law has eyes here now.", ephemeral=False)
+        
+    
 
 
 
