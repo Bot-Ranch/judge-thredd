@@ -204,7 +204,7 @@ async def give_role(interaction: discord.Interaction = None):
     try:
         await top_member.add_roles(trophee_role)
         embed_announcement = discord.Embed(
-            title=f"⚖️ The Verdict is In!", 
+            title=f"The Verdict is In!", 
             description=f"{top_member.mention} is the new best helper!", 
             color=discord.Color.gold()
         )
